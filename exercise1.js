@@ -5,17 +5,11 @@ async function fetchPosts() {
   const results = []
   try {
     const response = await axios.get('https://jsonplaceholder.typicode.com/posts')
-
-
     if (response.status !== 200) {
       throw new Error(`Response Status is ${response.status}`)
     }
-
     for (const post of response.data) {
-      if (post.id === 1) {
         results.push(post)
-
-      }
     }
     writeFileSync('posts.json', JSON.stringify(results, null, 2), 'utf-8')
     return results
