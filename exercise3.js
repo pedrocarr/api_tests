@@ -23,7 +23,7 @@ async function fetchImage() {
     const buffer = Buffer.from(data)
     writeFile('image1.png', buffer, (err) => {
       if (err) console.error(err.message)
-        console.log("Image was saved succesfully")
+      console.log("Image was saved succesfully")
     })
   } catch (error) {
     console.error(error.message)
@@ -31,3 +31,32 @@ async function fetchImage() {
 }
 
 fetchImage()
+
+
+async function fetchImageBlob() {
+  try {
+    const response = await fetch('https://w.wallhaven.cc/full/7p/wallhaven-7p39gy.png')
+    if (!response.ok) {
+      throw new Error(`Request failes status code is ${response.status}`)
+    }
+    const data = await response.blob()
+    data.name = 'image2.png'
+    data.lastModified = new Date()
+    const myFile = new File([data], 'image2.png', {
+      type: data.type,
+    })
+
+    const buffer = await myFile.arrayBuffer()
+
+    const blobToBuffer = Buffer.from(buffer)
+
+    writeFile('image2.png', blobToBuffer, (err) => {
+      if (err) console.error(err.message)
+      console.log('File from Blob saved succesfully')
+    })
+  } catch (error) {
+    console.error(error.message)
+  }
+}
+
+fetchImageBlob()
