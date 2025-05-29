@@ -21,6 +21,7 @@ async function fetchImage() {
 
     const data = await response.arrayBuffer()
     const buffer = Buffer.from(data)
+    console.log("🚀 ~ fetchImage ~ buffer:", buffer)
     writeFile('image1.png', buffer, (err) => {
       if (err) console.error(err.message)
       console.log("Image was saved succesfully")
@@ -47,9 +48,7 @@ async function fetchImageBlob() {
     })
 
     const buffer = await myFile.arrayBuffer()
-
     const blobToBuffer = Buffer.from(buffer)
-
     writeFile('image2.png', blobToBuffer, (err) => {
       if (err) console.error(err.message)
       console.log('File from Blob saved succesfully')
