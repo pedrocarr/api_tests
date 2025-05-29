@@ -1,7 +1,9 @@
 import axios from 'axios'
+
 import { writeFileSync } from 'fs'
 
 const BASE_URL = 'https://api.italki.com/api/v2/teachers'
+
 const PAGE_SIZE = 99
 
 const createUrl = (page) => `${BASE_URL}?page=${page}&page_size=${PAGE_SIZE}`
@@ -9,22 +11,26 @@ const createUrl = (page) => `${BASE_URL}?page=${page}&page_size=${PAGE_SIZE}`
 async function fetchTotalPages() {
   const url = createUrl(0)
   const response = await axios.get(url)
+
   const total = response.data?.paging?.total
-  return Math.ceil(total / PAGE_SIZE)
+
+  return total
 }
 
 async function fetchPage(page) {
   const url = createUrl(page)
   const response = await axios.get(url)
   if (response.status !== 200) throw new Error(`Failed page ${page}`)
+
   return response.data.data
 }
 
 async function fetchAllTeachers() {
   const totalPages = await fetchTotalPages()
+
   const pageRequests = []
 
-  for (let i = 0; i < totalPages + 1; i++) {
+  for (let i = 0; i < totalPages; i++) {
     pageRequests.push(fetchPage(i))
   }
 
@@ -39,7 +45,9 @@ async function fetchAllTeachers() {
   return teachersIds
 }
 
-fetchAllTeachers().then(teachersIds => {
-  console.log(`Fetched ${teachersIds.length} teacher IDs`)
-  writeFileSync('teachers.json', JSON.stringify(teachersIds, null, 2), 'utf-8')
+console.time('promises')
+fetchAllTeachers().then(data => {
+  console.log(`teachers ids is ${data.length}`)
+  writeFileSync('teachersIds.json', JSON.stringify(data, null, 2), 'utf-8')
 })
+console.timeEnd('promises')
